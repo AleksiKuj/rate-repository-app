@@ -74,7 +74,6 @@ const RepositoryList = () => {
           reviewCount={item.reviewCount}
         />
       )}
-      // other props
     />
   )
 }
