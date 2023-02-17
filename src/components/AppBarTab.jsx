@@ -11,13 +11,11 @@ const styles = StyleSheet.create({
 const AppBarTab = ({ title, link }) => {
   return (
     <View style={styles.tab}>
-      <Pressable onPress={() => console.log("pressed ", link)}>
-        <Link to={link}>
-          <Text color="white" fontWeight="bold" fontSize="subheading">
-            {title}
-          </Text>
-        </Link>
-      </Pressable>
+      <Link to={link}>
+        <Text color="white" fontWeight="bold" fontSize="subheading">
+          {title}
+        </Text>
+      </Link>
     </View>
   )
 }
