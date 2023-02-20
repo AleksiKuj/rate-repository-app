@@ -1,10 +1,11 @@
-import { View, Image, StyleSheet, Pressable } from "react-native"
+import { View, Image, StyleSheet, Pressable, FlatList } from "react-native"
 import Text from "./Text"
 import { GET_REPOSITORY } from "../graphql/queries"
 import { useQuery } from "@apollo/client"
 import { useParams } from "react-router-native"
 import * as Linking from "expo-linking"
 import theme from "../theme"
+import { format } from "date-fns"
 
 const Count = ({ value }) => {
   const styles = StyleSheet.create({
@@ -30,6 +31,11 @@ const styles = StyleSheet.create({
   container: {
     display: "flex",
     backgroundColor: "white",
+    flex: 1,
+  },
+  separator: {
+    height: 10,
+    backgroundColor: theme.colors.mainBackground,
   },
   avatar: {
     width: 55,
@@ -72,7 +78,42 @@ const styles = StyleSheet.create({
     backgroundColor: theme.colors.primary,
     alignItems: "center",
   },
+  reviewContainer: {
+    display: "flex",
+    flexDirection: "row",
+  },
+  rating: {
+    width: 40,
+    height: 40,
+    borderRadius: 40 / 2,
+    margin: 10,
+    borderWidth: 2,
+    color: theme.colors.primary,
+    borderColor: theme.colors.primary,
+    alignItems: "center",
+    textAlign: "center",
+    justifyContent: "center",
+  },
+  reviewText: {
+    flexWrap: "wrap",
+    marginRight: 50,
+  },
 })
+const ReviewItem = ({ review }) => {
+  return (
+    <View style={styles.reviewContainer}>
+      <View style={styles.rating}>
+        <Text color="primary">{review.rating}</Text>
+      </View>
+      <View style={styles.infoContainer}>
+        <Text fontWeight={"bold"}>{review.user.username}</Text>
+        <Text>{format(new Date(review.createdAt), "dd.MM.yyyy")}</Text>
+        <Text style={styles.reviewText}>{review.text}</Text>
+      </View>
+    </View>
+  )
+}
+const ItemSeparator = () => <View style={styles.separator} />
 
 function RepositoryDetails({ id }) {
   const { loading, error, data } = useQuery(GET_REPOSITORY, {
@@ -82,6 +123,11 @@ function RepositoryDetails({ id }) {
 
   if (loading) return <Text>Loading...</Text>
   if (error) return <Text>Error: {error.message}</Text>
+
+  const reviewNodes = data.repository.reviews
+    ? data.repository.reviews.edges.map((edge) => edge.node)
+    : []
+
   return (
     <View style={styles.container} testID="repositoryItem">
       <View style={styles.rowContainer}>
@@ -121,6 +167,15 @@ function RepositoryDetails({ id }) {
           Open in GitHub
         </Text>
       </Pressable>
+      <FlatList
+        data={reviewNodes}
+        ItemSeparatorComponent={ItemSeparator}
+        renderItem={({ item }) => <ReviewItem review={item} />}
+        keyExtractor={({ id }) => id}
+
+        //ListHeaderComponent={() => <RepositoryInfo repository={repository} />}
+        // ...
+      />
     </View>
   )
 }
