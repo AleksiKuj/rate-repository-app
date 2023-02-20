@@ -48,11 +48,14 @@ const AppBar = () => {
         {!data.me ? (
           <AppBarTab title="Sign in" link="/signin" />
         ) : (
-          <Pressable style={styles.tabButton} onPress={handleSignOut}>
-            <Text color="white" fontWeight="bold" fontSize="subheading">
-              Sign out
-            </Text>
-          </Pressable>
+          <>
+            <AppBarTab title="Create a review" link="/createreview" />
+            <Pressable style={styles.tabButton} onPress={handleSignOut}>
+              <Text color="white" fontWeight="bold" fontSize="subheading">
+                Sign out
+              </Text>
+            </Pressable>
+          </>
         )}
       </ScrollView>
     </View>

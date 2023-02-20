@@ -116,9 +116,13 @@ const ReviewItem = ({ review }) => {
 const ItemSeparator = () => <View style={styles.separator} />
 
 function RepositoryDetails({ id }) {
-  const { loading, error, data } = useQuery(GET_REPOSITORY, {
-    variables: { repositoryId: id },
-  })
+  const { loading, error, data } = useQuery(
+    GET_REPOSITORY,
+    {
+      variables: { repositoryId: id },
+    },
+    { fetchPolicy: "cache-and-network" }
+  )
   console.log("data:", data)
 
   if (loading) return <Text>Loading...</Text>
@@ -172,9 +176,6 @@ function RepositoryDetails({ id }) {
         ItemSeparatorComponent={ItemSeparator}
         renderItem={({ item }) => <ReviewItem review={item} />}
         keyExtractor={({ id }) => id}
-
-        //ListHeaderComponent={() => <RepositoryInfo repository={repository} />}
-        // ...
       />
     </View>
   )
