@@ -6,6 +6,7 @@ import Constants from "expo-constants"
 import theme from "../theme"
 import AppBarTab from "./AppBarTab"
 import Text from "./Text"
+import { useNavigate } from "react-router-native"
 
 const styles = StyleSheet.create({
   container: {
@@ -22,11 +23,17 @@ const styles = StyleSheet.create({
 const AppBar = () => {
   const authStorage = useAuthStorage()
   const apolloClient = useApolloClient()
-  const { data, error, loading } = useQuery(ME)
+  const { data, error, loading } = useQuery(ME, {
+    variables: {
+      includeReviews: false,
+    },
+  })
+  const navigate = useNavigate()
 
   const handleSignOut = async () => {
     try {
       await authStorage.removeAccessToken()
+      navigate("/")
       apolloClient.resetStore()
       console.log("removed token")
     } catch (e) {
@@ -53,6 +60,7 @@ const AppBar = () => {
         ) : (
           <>
             <AppBarTab title="Create a review" link="/createreview" />
+            <AppBarTab title="My reviews" link="/myreviews" />
             <Pressable style={styles.tabButton} onPress={handleSignOut}>
               <Text color="white" fontWeight="bold" fontSize="subheading">
                 Sign out
