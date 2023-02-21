@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { useQuery } from "@apollo/client"
 
 import { GET_REPOSITORIES } from "../graphql/queries"
 
 const useRepositories = (order) => {
   const [repositories, setRepositories] = useState()
-  const { data, error, loading } = useQuery(
+  const { data, error, loading, fetchMore } = useQuery(
     GET_REPOSITORIES,
     { variables: order },
     {
@@ -13,14 +13,24 @@ const useRepositories = (order) => {
     }
   )
 
-  useEffect(() => {
-    if (data) {
-      console.log(data)
+  const handleFetchMore = () => {
+    const canFetchMore = !loading && data?.repositories.pageInfo.hasNextPage
+
+    if (!canFetchMore) {
+      return
     }
-  }, [data])
+
+    fetchMore({
+      variables: {
+        after: data.repositories.pageInfo.endCursor,
+        ...order,
+      },
+    })
+  }
 
   return {
     repositories: data?.repositories,
+    fetchMore: handleFetchMore,
     loading,
   }
 }

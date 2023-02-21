@@ -5,11 +5,15 @@ export const GET_REPOSITORIES = gql`
     $orderBy: AllRepositoriesOrderBy
     $orderDirection: OrderDirection
     $searchKeyword: String
+    $after: String
+    $first: Int
   ) {
     repositories(
       orderBy: $orderBy
       orderDirection: $orderDirection
       searchKeyword: $searchKeyword
+      after: $after
+      first: $first
     ) {
       edges {
         node {
@@ -24,12 +28,18 @@ export const GET_REPOSITORIES = gql`
           id
         }
       }
+      pageInfo {
+        startCursor
+        endCursor
+        hasNextPage
+        hasPreviousPage
+      }
     }
   }
 `
 
 export const GET_REPOSITORY = gql`
-  query Query($repositoryId: ID!) {
+  query repository($repositoryId: ID!) {
     repository(id: $repositoryId) {
       description
       forksCount
@@ -53,6 +63,13 @@ export const GET_REPOSITORY = gql`
               username
             }
           }
+          cursor
+        }
+        pageInfo {
+          startCursor
+          endCursor
+          hasNextPage
+          hasPreviousPage
         }
       }
     }

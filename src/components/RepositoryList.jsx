@@ -31,6 +31,7 @@ const RepositoryListContainer = memo(function RepositoryListContainer({
   orderBy,
   handlePickerValueChange,
   orderDirection,
+  onEndReach,
 }) {
   const navigate = useNavigate()
   const repositorynodes = repositories
@@ -75,6 +76,8 @@ const RepositoryListContainer = memo(function RepositoryListContainer({
             />
           </Pressable>
         )}
+        onEndReached={onEndReach}
+        onEndReachedThreshold={0.5}
       />
     </>
   )
@@ -91,9 +94,15 @@ const RepositoryList = () => {
     orderBy,
     orderDirection,
     searchKeyword,
+    first: 6,
   }
 
-  const { repositories, loading } = useRepositories(variables)
+  const { repositories, loading, fetchMore } = useRepositories(variables)
+
+  const onEndReach = () => {
+    console.log("You have reached the end of the list")
+    fetchMore()
+  }
 
   const handlePickerValueChange = (itemValue) => {
     setOrderBy(itemValue)
@@ -124,6 +133,7 @@ const RepositoryList = () => {
         orderDirection={orderDirection}
         handlePickerValueChange={handlePickerValueChange}
         orderBy={orderBy}
+        onEndReach={onEndReach}
       />
     </>
   )
